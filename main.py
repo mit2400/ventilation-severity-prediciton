@@ -76,35 +76,94 @@ def main():
     model = MVModel(config)
     print(model(X[3][:1]))
 
-    
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=lr), 
-        loss=tf.keras.losses.BinaryCrossentropy(label_smoothing=ls), 
-        metrics=[metrics.AUC(name = 'auc')])
 
-    lr = ReduceLROnPlateau(monitor='val_auc', mode='max', factor=0.3, min_lr=1e-6, patience=5, verbose=True)
-    #es = EarlyStopping(monitor='val_auc', mode='max', patience=10, restore_best_weights=True, verbose=True)
-    sv = tf.keras.callbacks.ModelCheckpoint(
-        checkpoint_filepath, monitor='val_auc', verbose=1, save_best_only=True,
-        save_weights_only=True, mode='max', save_freq='epoch', options=None
-    )
-    print("Train shape: {}, {}, Valid shape: {}, {}".format(X[0].shape, Y[0].shape, X[1].shape, Y[1].shape))
-    
-    hist=model.fit(X[0], Y[0], validation_data=(X[1], Y[1]), class_weight=dict(enumerate(class_weights)), 
-            epochs=epoch, batch_size=128, callbacks=[lr,sv], verbose=True)
+
+
+    # Instantiate an optimizer.
+    optimizer = tf.keras.optimizers.SGD(learning_rate=1e-3)
+    # Instantiate a loss function.
+    loss_fn = tf.keras.losses.BinaryCrossentropy(label_smoothing=ls)
+
+    batch_size = 128
+    train_dataset = tf.data.Dataset.from_tensor_slices((X[0], Y[0]))
+    train_dataset = train_dataset.shuffle(buffer_size=1024).batch(batch_size)
 
     
+    # Prepare the validation dataset.
+    val_dataset = tf.data.Dataset.from_tensor_slices((X[1], Y[1]))
+    val_dataset = val_dataset.batch(batch_size)
 
-    for i in range (1,4):
-        model.evaluate(X[i], Y[i], verbose=2)
+    epochs = 2
+    for epoch in range(epochs):
+        print("\nStart of epoch %d" % (epoch,))
+        # https://www.tensorflow.org/guide/keras/writing_a_training_loop_from_scratch/?hl=ko
+
+        # Iterate over the batches of the dataset.
+        for step, (x_batch_train, y_batch_train) in enumerate(train_dataset):
+
+            # Open a GradientTape to record the operations run
+            # during the forward pass, which enables auto-differentiation.
+            with tf.GradientTape() as tape:
+
+                # Run the forward pass of the layer.
+                # The operations that the layer applies
+                # to its inputs are going to be recorded
+                # on the GradientTape.
+                logits = model(x_batch_train, training=True)  # Logits for this minibatch
+
+                # Compute the loss value for this minibatch.
+                loss_value = loss_fn(y_batch_train, logits)
+
+            # Use the gradient tape to automatically retrieve
+            # the gradients of the trainable variables with respect to the loss.
+            grads = tape.gradient(loss_value, model.trainable_weights)
+
+            # Run one step of gradient descent by updating
+            # the value of the variables to minimize the loss.
+            optimizer.apply_gradients(zip(grads, model.trainable_weights))
+
+            # Log every 200 batches.
+            if step % 200 == 0:
+                print(
+                    "Training loss (for one batch) at step %d: %.4f"
+                    % (step, float(loss_value))
+                )
+                print("Seen so far: %s samples" % ((step + 1) * batch_size))
+
+
+
+
+
+    
+    # model.compile(
+    #     optimizer=tf.keras.optimizers.Adam(learning_rate=lr), 
+    #     loss=tf.keras.losses.BinaryCrossentropy(label_smoothing=ls), 
+    #     metrics=[metrics.AUC(name = 'auc')])
+
+    # lr = ReduceLROnPlateau(monitor='val_auc', mode='max', factor=0.3, min_lr=1e-6, patience=5, verbose=True)
+    # #es = EarlyStopping(monitor='val_auc', mode='max', patience=10, restore_best_weights=True, verbose=True)
+    # sv = tf.keras.callbacks.ModelCheckpoint(
+    #     checkpoint_filepath, monitor='val_auc', verbose=1, save_best_only=True,
+    #     save_weights_only=True, mode='max', save_freq='epoch', options=None
+    # )
+    
+    # print("Train shape: {}, {}, Valid shape: {}, {}".format(X[0].shape, Y[0].shape, X[1].shape, Y[1].shape))
+    
+    # hist=model.fit(X[0], Y[0], validation_data=(X[1], Y[1]), class_weight=dict(enumerate(class_weights)), 
+    #         epochs=epoch, batch_size=128, callbacks=[lr,sv], verbose=True)
 
     
 
-    y_valid=[]
-    y_prob=[]
-    for i in range(1,4):
-        y_prob.append(model.predict(X[i]).squeeze())  
-        y_valid.append(Y[i])
+    # for i in range (1,4):
+    #     model.evaluate(X[i], Y[i], verbose=2)
+
+    
+
+    # y_valid=[]
+    # y_prob=[]
+    # for i in range(1,4):
+    #     y_prob.append(model.predict(X[i]).squeeze())  
+    #     y_valid.append(Y[i])
 
     # # create tensorboard logger
     # logger = Logger(sess, config)
