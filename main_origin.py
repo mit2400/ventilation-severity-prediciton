@@ -11,14 +11,12 @@ import tensorflow as tf
 import random
 import numpy as np
 import pickle
-
-from models.model import MVModel
+from models.model import SeverityModel, MVModel
 from eval.evaluation import eval_severity_scores
-
-# from tensorflow.keras.models import Model, Sequential
-# from tensorflow.keras.layers import LSTM, Bidirectional, Concatenate, GRU
-# from tensorflow.keras.layers import Input, Dense, Dropout
-# from tensorflow.keras.layers import BatchNormalization, GlobalMaxPooling1D
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import LSTM, Bidirectional, Concatenate, GRU
+from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.layers import BatchNormalization, GlobalMaxPooling1D
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras import metrics, regularizers
 from sklearn.utils import class_weight
@@ -53,7 +51,7 @@ def main():
     nunit = 16
     lr=1e-3
     ls=0.2
-    epoch=20
+    epoch=1
 
     # # create the experiments dirs
     # create_dirs([config.summary_dir, config.checkpoint_dir])
@@ -64,15 +62,13 @@ def main():
         X = pickle.load(f)
     with open("data/Y.pkl", "rb") as f:
         Y = pickle.load(f)
-    
-    # with open("data/X_sample.pkl", "rb") as f:
-    #     X = pickle.load(f)
-    # with open("data/Y_sample.pkl", "rb") as f:
-    #     Y = pickle.load(f)
 
     eval_severity_scores(X,Y)
     class_weights = class_weight.compute_class_weight(class_weight ='balanced', classes=np.unique(Y[0]), y =Y[0])
 
+    # create an instance of the model you want
+    # SM = SeverityModel(config)
+    # model = SM.build_model()  
     model = MVModel(config)
     print(model(X[3][:1]))
 
