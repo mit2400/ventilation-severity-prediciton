@@ -7,7 +7,6 @@ def extract_max(ls):
         #print(max_val)
         return max_val
 
-
 def sigmoid(lst):
     return 1 / (1 + np.exp(-np.array(lst)))
 
