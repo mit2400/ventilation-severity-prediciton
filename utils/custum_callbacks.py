@@ -11,6 +11,6 @@ class MultiValidationCallback(tf.keras.callbacks.Callback):
             logs[f'val{i+2}_loss'] = val_loss
             logs[f'val{i+2}_auc'] = val_auc
             logs[f'val{i+2}_ap'] = val_ap
-        formatted_items = [f'{key}: {value:.3f}' for key, value in logs.items()]
+        formatted_items = [f'{key}: {value:.3f}' for key, value in logs.items() if key == 'loss' or key.endswith('auc')]
         print(f"Epoch{epoch}\t", end='')
         print(formatted_items)

@@ -11,6 +11,7 @@ def get_datasets(test = False, batch_size = 128):
         with open("data/X.pkl", "rb") as f:            X = pickle.load(f)
         with open("data/Y.pkl", "rb") as f:            Y = pickle.load(f)
     print("Train shape: {}, {}, Valid shape: {}, {}".format(X[0].shape, Y[0].shape, X[1].shape, Y[1].shape))
+    
     class_weights = []
     for i in range(4):
         class_weights.append(class_weight.compute_class_weight(class_weight ='balanced', classes=np.unique(Y[i]), y =Y[i]))

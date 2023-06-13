@@ -8,14 +8,44 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def get_args():
-    argparser = argparse.ArgumentParser(description=__doc__)
-    argparser.add_argument(
-        '-c', '--config',
-        metavar='C',
-        default='None',
-        help='The Configuration file')
-    args = argparser.parse_args()
+    parser = argparse.ArgumentParser(description='training arguments')
+    parser.add_argument('--testcode', action='store_true', help='run test code')
+    parser.add_argument('--search_params', action='store_true', help='do hyperparmeter search')
+    parser.add_argument('--config_path', type=str, default='./configs/base.json', help='load configs from given path')
+    #add arguments todo
+    args = parser.parse_args()
     return args
+
+def get_configs(args):
+
+    if args.testcode:
+        with open('./configs/base.json', 'r') as f:
+            configs = json.load(f)
+        summary_filepath = f"./logs/test"
+    elif args.search_params:
+        #todo
+        pass
+    else:
+        with open(args.config_path, 'r') as f:
+            configs = json.load(f)
+        #file_paths
+        # _configs = '_'.join(str(value) for value in configs.values())
+        _configs = '_'.join(f'{key}{value}' for key, value in configs.items())
+        summary_filepath = f"./logs/model_{_configs}"
+
+    return configs, summary_filepath
+
+
+    
+    #file_paths
+    # _configs = '_'.join(str(value) for value in configs.values())
+    _configs = '_'.join(f'{key}{value}' for key, value in configs.items())
+    
+    summary_filepath = f"./logs/model_{_configs}"
+    
+
+    return
+
 
 def set_seed(seed=42):
     random.seed(seed)
