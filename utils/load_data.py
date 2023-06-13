@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 from sklearn.utils import class_weight
 
-def get_datasets(test = False):
+def get_datasets(test = False, batch_size = 128):
     if test:
         with open("data/X_sample.pkl", "rb") as f:            X = pickle.load(f)
         with open("data/Y_sample.pkl", "rb") as f:            Y = pickle.load(f)
@@ -18,7 +18,6 @@ def get_datasets(test = False):
     print(class_weights)
 
     datasets = [[] for _ in range(4)]
-    batch_size = 128
     for i in range(4):
         datasets[i]= tf.data.Dataset.from_tensor_slices((X[i], Y[i]))
         if i == 0:

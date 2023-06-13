@@ -1,4 +1,5 @@
 import os
+import json
 import argparse
 import random
 import tensorflow as tf
@@ -26,6 +27,11 @@ def save_hist(hist, summary_filepath):
     hist_df = pd.DataFrame(hist.history) 
     with open(os.path.join(summary_filepath,"hist.csv"), mode='w') as f:
         pd.DataFrame(hist.history).to_csv(f)
+
+def save_config(config, summary_filepath):
+    config_json = json.dumps(config, indent=4)
+    with open(os.path.join(summary_filepath,'config.json'), 'w') as f:
+        f.write(config_json)
 
 def plot_history(history,summary_filepath):
     metrics = ['loss', 'auc', 'ap']

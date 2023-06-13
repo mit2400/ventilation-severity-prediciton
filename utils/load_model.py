@@ -21,11 +21,24 @@ def get_uncompiled_model(input_shape=(6,30), drop_rate=0.4, num_units=16, num_la
     model = Model(inputs=x_input, outputs=ouput, name='severity_prediction')
     return model
 
-def get_compiled_model(input_shape=(6,30), drop_rate=0.4, num_units=16,num_layer=3, reg = 0.01, learning_rate=1e-3,label_smoothing=0.2):
-    model = get_uncompiled_model(input_shape, drop_rate, num_units, num_layer, reg)
+def get_compiled_model(input_shape=(6,30), configs=None):
+    if configs==None:
+        configs = {
+            "drop_rate": 0.4,
+            "num_units": 8,
+            "num_layer": 2,
+            "regularize": 0.01,
+            "learning_rate": 0.001,
+            "label_smoothing": 0.2,
+            "class_weight": 2,
+            "batch_size": 128,
+            "epochs": 20
+        }
+    model = get_uncompiled_model(input_shape, configs['drop_rate'], configs['num_units'], configs['num_layer'], configs['regularize'])
+
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), 
-        loss=tf.keras.losses.BinaryCrossentropy(label_smoothing=label_smoothing),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=configs['learning_rate']), 
+        loss=tf.keras.losses.BinaryCrossentropy(label_smoothing=configs['label_smoothing']),
         metrics=[metrics.AUC(name='auc', curve='ROC'), metrics.AUC(name='ap', curve='PR')]   
     )
     return model
