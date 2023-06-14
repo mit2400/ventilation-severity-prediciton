@@ -17,11 +17,11 @@ def get_args():
     return args
 
 def get_configs(args):
-
     if args.testcode:
         with open('./configs/base.json', 'r') as f:
             configs = json.load(f)
         summary_filepath = f"./logs/test"
+        print(f"Loading test configs")
     elif args.search_params:
         #todo
         pass
@@ -32,20 +32,9 @@ def get_configs(args):
         # _configs = '_'.join(str(value) for value in configs.values())
         _configs = '_'.join(f'{key}{value}' for key, value in configs.items())
         summary_filepath = f"./logs/model_{_configs}"
+        print(f"Loading configs from {args.config_path}")
 
     return configs, summary_filepath
-
-
-    
-    #file_paths
-    # _configs = '_'.join(str(value) for value in configs.values())
-    _configs = '_'.join(f'{key}{value}' for key, value in configs.items())
-    
-    summary_filepath = f"./logs/model_{_configs}"
-    
-
-    return
-
 
 def set_seed(seed=42):
     random.seed(seed)
