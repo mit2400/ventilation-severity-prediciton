@@ -61,5 +61,6 @@ if __name__ == '__main__':
     print("TensorFlow version:", tf.__version__)
     set_seed()
     args = get_args()
+    print(args)
     if args.eval:   eval(args)
     else:           train(args)

@@ -42,9 +42,9 @@ def eval_severity_scores(X,Y):
     acc.columns = columns
     acc.index = rows
 
-    auc.to_csv('logs/severity_auroc.csv')
-    ap.to_csv('logs/severity_ap.csv')
-    acc.to_csv('logs/severity_acc.csv')
+    auc.to_csv('other_scores/severity_auroc.csv')
+    ap.to_csv('other_scores/severity_ap.csv')
+    acc.to_csv('other_scores/severity_acc.csv')
 
     print('AUROC')
     print(auc)
