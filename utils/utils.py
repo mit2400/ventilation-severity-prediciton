@@ -9,17 +9,20 @@ import matplotlib.pyplot as plt
 
 def get_args():
     parser = argparse.ArgumentParser(description='training arguments')
-    # parser.add_argument('--testcode', action='store_true', help='run test code')
-    parser.add_argument('--mode', type=str, default='train', help='[train,eval.code_test] train is default')
+    parser.add_argument('--testcode', action='store_true', help='run test code')
+    parser.add_argument('--eval', action='store_true', help='by default, its train mode, --eval for eval mode')
     parser.add_argument('--search_params', action='store_true', help='do hyperparmeter search')
-    parser.add_argument('--config_path', type=str, default='./configs/base.json', help='load configs from given path')
-    parser.add_argument('--config_path', type=str, default='./configs/base.json', help='load configs from given path')
+    parser.add_argument('--drop_scores', action='store_true', help='whether to drop medical scores in input')
+
+    parser.add_argument('--config_path', type=str, default='./configs/base.json', help='[train] load configs from given path')
+    parser.add_argument('--eval_path', type=str, default='./logs/best_model/lstm_dp04.h5', help='[eval] load model from given path')
+    parser.add_argument('--eval_epoch', type=str, default=None, help='[eval] which epoch to load')
     #add arguments todo
     args = parser.parse_args()
     return args
 
 def get_configs(args):
-    if args.mode == 'code_test':
+    if args.testcode:
         with open('./configs/base.json', 'r') as f:
             configs = json.load(f)
         summary_filepath = f"./logs/test"
