@@ -1,4 +1,5 @@
-X.npz
-Y.npz
+*
+!X_sample.npz
+!Y_sample.npz
 
 !.gitignore

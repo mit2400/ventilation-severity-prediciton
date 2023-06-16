@@ -9,12 +9,12 @@ from utils.custum_callbacks import MultiValidationCallback
 def train(args):
     # load configs
     configs, summary_filepath = get_configs(args)
+    print(args)
+    print(configs)
+    print(summary_filepath)
 
     # load data
-    if args.testcode:
-        datasets, class_weights = get_datasets(batch_size = configs['batch_size'],test=True,drop_scores=args.drop_scores)
-    else:
-        datasets, class_weights = get_datasets(batch_size = configs['batch_size'],drop_scores=args.drop_scores)
+    datasets, class_weights = get_datasets(configs)
     configs['input_shape'] = tuple(datasets[0].element_spec[0].shape[-2:].as_list()) #(6,30)
 
     #load model
@@ -27,7 +27,7 @@ def train(args):
             save_best_only=True,save_weights_only=True,monitor="val_auc",mode='max',verbose=0, save_freq='epoch', options=None
         ),
         tf.keras.callbacks.TensorBoard(log_dir=summary_filepath),
-        tf.keras.callbacks.ReduceLROnPlateau(monitor='val_auc', mode='max', factor=0.3, min_lr=1e-4, patience=5, verbose=True),
+        tf.keras.callbacks.ReduceLROnPlateau(monitor='val_auc', mode='max', factor=0.3, min_lr=1e-6, patience=3, verbose=True),
         MultiValidationCallback([datasets[2], datasets[3]])
     ]
 
@@ -46,12 +46,13 @@ def eval(args):
         model = get_trained_model_h5(args.eval_path)    
     else:
         model = get_trained_model_ckpt(args.eval_path,args.eval_epoch)
+    model.summary()
 
     drop_scores=False
     if model.input_shape[2] == 25:
         drop_scores=True
 
-    datasets, class_weights = get_datasets(eval=True, drop_scores=drop_scores)
+    datasets, class_weights = get_datasets(eval=True, drop_scores=True)
     for i in range(3):
         model.evaluate(datasets[i])
     #todo
@@ -61,6 +62,5 @@ if __name__ == '__main__':
     print("TensorFlow version:", tf.__version__)
     set_seed()
     args = get_args()
-    print(args)
     if args.eval:   eval(args)
     else:           train(args)

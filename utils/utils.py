@@ -17,6 +17,7 @@ def get_args():
     parser.add_argument('--config_path', type=str, default='./configs/base.json', help='[train] load configs from given path')
     parser.add_argument('--eval_path', type=str, default='./logs/best_model/lstm_dp04.h5', help='[eval] load model from given path')
     parser.add_argument('--eval_epoch', type=str, default=None, help='[eval] which epoch to load')
+    # parser.add_argument('--impute_type', type=int, default=2, help='Impute data with method 0,1,2: refval, bf6h, bf6h_drop')
     #add arguments todo
     args = parser.parse_args()
     return args
@@ -33,11 +34,15 @@ def get_configs(args):
     else:
         with open(args.config_path, 'r') as f:
             configs = json.load(f)
+        if args.drop_scores == True:   configs['input_shape']=[6,25]
         #file_paths
         # _configs = '_'.join(str(value) for value in configs.values())
         _configs = '_'.join(f'{key}{value}' for key, value in configs.items())
         summary_filepath = f"./logs/model_{_configs}"
         print(f"Loading configs from {args.config_path}")
+    
+    configs['isTest']= args.testcode
+    configs['isEval']= args.eval
 
     return configs, summary_filepath
 
