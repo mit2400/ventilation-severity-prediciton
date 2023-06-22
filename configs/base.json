@@ -2,12 +2,12 @@
   "impute": 1,
   "drop_rate": 0.4,
   "num_units": 8,
-  "num_layer": 2,
+  "num_layer": 3,
   "regularize": 0.01,
   "learning_rate": 0.001,
   "label_smoothing": 0.2,
   "class_weight": 0,
   "batch_size": 128,
-  "epochs": 20,
+  "epochs": 200,
   "input_shape": [6,30]
 }

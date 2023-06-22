@@ -23,7 +23,7 @@ def get_uncompiled_model(configs):
             "regularize": 0.01,
             "learning_rate": 0.001,
             "label_smoothing": 0.2,
-            "class_weight": 2,
+            "class_weight": 0,
             "batch_size": 128,
             "epochs": 20
         }
@@ -48,7 +48,7 @@ def get_compiled_model(configs):
             "regularize": 0.01,
             "learning_rate": 0.001,
             "label_smoothing": 0.2,
-            "class_weight": 2,
+            "class_weight": 0,
             "batch_size": 128,
             "epochs": 20
         }
@@ -68,11 +68,12 @@ def get_trained_model_h5(model_path=None):
     print(f'loading pretrained model from {model_path}')
     return  load_model(model_path)
 
-def get_trained_model_ckpt(model_path=None, epoch=None):
+def get_trained_model_ckpt(model_path=None, epoch=None,configs=None):
     if model_path == None:
         model_path = './logs/model_drop_rate0.4_num_units8_num_layer2_regularize0.01_learning_rate0.001_label_smoothing0.2_class_weight2_batch_size128_epochs20'
-    with open(os.path.join(model_path,"config.json"), 'r') as f:
-        configs = json.load(f)
+    if configs==None:
+        with open(os.path.join(model_path,"config.json"), 'r') as f:
+            configs = json.load(f)
 
     ckpt_path = model_path+"/checkpoint"
     if epoch == None:

@@ -11,6 +11,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='training arguments')
     parser.add_argument('--testcode', action='store_true', help='run test code')
     parser.add_argument('--eval', action='store_true', help='by default, its train mode, --eval for eval mode')
+    parser.add_argument('--tuning', action='store_true', help='by default, its train mode, --eval for eval mode')
     parser.add_argument('--search_params', action='store_true', help='do hyperparmeter search')
     parser.add_argument('--drop_scores', action='store_true', help='whether to drop medical scores in input')
 
@@ -42,7 +43,6 @@ def get_configs(args):
         print(f"Loading configs from {args.config_path}")
     
     configs['isTest']= args.testcode
-    configs['isEval']= args.eval
 
     return configs, summary_filepath
 
