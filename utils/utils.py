@@ -15,6 +15,7 @@ def get_args():
     parser.add_argument('--search_params', action='store_true', help='do hyperparmeter search')
     parser.add_argument('--drop_scores', action='store_true', help='whether to drop medical scores in input')
 
+    parser.add_argument('--model', type=str, default='bilstm', help='models: default to bilstm, can be tabnet')
     parser.add_argument('--config_path', type=str, default='./configs/base.json', help='[train] load configs from given path')
     parser.add_argument('--eval_path', type=str, default='./logs/best_model/lstm_dp04.h5', help='[eval] load model from given path')
     parser.add_argument('--eval_epoch', type=str, default=None, help='[eval] which epoch to load')
@@ -23,7 +24,7 @@ def get_args():
     args = parser.parse_args()
     return args
 
-def get_configs(args):
+def get_configs(args=None):
     if args.testcode:
         with open('./configs/base.json', 'r') as f:
             configs = json.load(f)
@@ -72,6 +73,7 @@ def plot_history(history,summary_filepath):
         plt.plot(history.epoch, history.history['val_'+metric], linestyle="--", label='Val')
         plt.plot(history.epoch, history.history['val2_'+metric], linestyle="--", label='Val2')
         plt.plot(history.epoch, history.history['val3_'+metric], linestyle="--", label='Val3')
+        plt.plot(history.epoch, history.history['val4_'+metric], linestyle="--", label='Val4')
         plt.xlabel('Epoch')
         plt.ylabel(name)
         plt.legend()

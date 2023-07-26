@@ -8,6 +8,7 @@
   "label_smoothing": 0.2,
   "class_weight": 0,
   "batch_size": 128,
-  "epochs": 200,
-  "input_shape": [6,30]
+  "epochs": 20,
+  "isAttention": 0,
+  "input_shape": [6,25]
 }
