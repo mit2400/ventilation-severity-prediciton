@@ -33,8 +33,8 @@ def train(args):
         ),
         tf.keras.callbacks.TensorBoard(log_dir=summary_filepath),
         tf.keras.callbacks.ReduceLROnPlateau(monitor='val_auc', mode='max', 
-                        factor=0.3, min_lr=1e-6, patience=3, verbose=True),
-        MultiValidationCallback([datasets[2], datasets[3], datasets[4]])
+                        factor=0.3, min_lr=1e-6, patience=3, verbose=True)
+        # ,        MultiValidationCallback([datasets[2], datasets[3]])
     ]
 
     # model fit
